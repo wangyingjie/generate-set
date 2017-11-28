@@ -48,4 +48,16 @@ public class MethodExtractUtils {
         return true;
     }
 
+    public static boolean checkClassHasValidSetMethod(PsiClass psiClass) {
+        while (isSystemClass(psiClass)) {
+            for (PsiMethod m : psiClass.getMethods()) {
+                if (isValidSetMethod(m)) {
+                    return true;
+                }
+            }
+            psiClass = psiClass.getSuperClass();
+        }
+        return false;
+    }
+
 }

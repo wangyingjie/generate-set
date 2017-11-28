@@ -41,17 +41,7 @@ public class GenerateSetMethodAction extends PsiElementBaseIntentionAction {
             }
 
             handleWithLocalVariable(psiLocal, project, psiLocal);
-
-        } else if (psiParent instanceof PsiMethod) {
-            PsiMethod method = (PsiMethod) psiParent;
-            if (method.getReturnType() == null) {
-                return;
-            }
-
-            //  handleWithMethod(method, project, method);
         }
-
-        // System.out.println("Hello world!");
     }
 
 
@@ -109,10 +99,24 @@ public class GenerateSetMethodAction extends PsiElementBaseIntentionAction {
 
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement psiElement) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+        PsiElement psiParent = PsiTreeUtil.getParentOfType(element, PsiLocalVariable.class, PsiMethod.class);
+        if (psiParent == null) {
+            return false;
+        }
 
-        return true;
+        PsiClass psiClass = null;
+        if (psiParent instanceof PsiLocalVariable) {
+            PsiLocalVariable psiLocal = (PsiLocalVariable) psiParent;
+            if (!(psiLocal.getParent() instanceof PsiDeclarationStatement)) {
+                return false;
+            }
+            psiClass = PsiTypesUtil.getPsiClass(psiLocal.getType());
+        }
+
+        return MethodExtractUtils.checkClassHasValidSetMethod(psiClass);
     }
+
 
     @Nls
     @NotNull
