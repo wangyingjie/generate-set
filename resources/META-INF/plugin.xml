@@ -1,37 +1,57 @@
 <idea-plugin>
-  <id>com.your.company.unique.plugin.id</id>
-  <name>generate-set</name>
-  <version>1.0</version>
-  <vendor email="wangyingjie1@jd.com" url="http://www.jd.com">XN-PLATFORM</vendor>
+    <id>AutoGenerate-set</id>
+    <name>AutoGenerate-set method code and convert code</name>
+    <version>1.0</version>
+    <vendor email="wangyingjie1@jd.com" url="http://www.jd.com">XN-PLATFORM</vendor>
 
-  <description><![CDATA[
-      <p> generate instance set method </p>
+    <description><![CDATA[
+      <p> generate instance set method(在变量中间使用快捷键：Alt + enter)</p>
+      <p> generate convert code from source instance to target instance(在转换方法后使用快捷键：Alt + enter) </p>
     ]]></description>
 
-  <change-notes><![CDATA[
+    <change-notes><![CDATA[
       Add change notes here.<br>
       <em>most HTML tags may be used</em>
+      <p>For Example: </p>
+      <li>
+        Student student = new Student();<br/>
+        student.setId(0L);<br/>
+        student.setAge(0);<br/>
+        student.setName("");<br/>
+       </li>
+
+       <li>
+        private Student convertStudent(People people) {<br/>
+            Student student = new Student();<br/>
+            student.setId(people.getId());<br/>
+            student.setAge(people.getAge());<br/>
+            student.setName(people.getName());<br/>
+            student.setList(null);<br/>
+            return student;<br/>
+        }<br/>
+        </li>
+
     ]]>
-  </change-notes>
+    </change-notes>
 
-  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="145.0"/>
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="145.0"/>
 
-  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-       on how to target different products -->
-  <!-- uncomment to enable plugin in all products
-  <depends>com.intellij.modules.lang</depends>
-  -->
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
 
-  <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
-    <intentionAction>
-      <className>com.jd.GenerateSetMethodAction</className>
-    </intentionAction>
-  </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <intentionAction>
+            <className>com.jd.GenerateSetMethodAction</className>
+        </intentionAction>
+    </extensions>
 
-  <actions>
-    <!-- Add your actions here -->
-  </actions>
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
 
 </idea-plugin>

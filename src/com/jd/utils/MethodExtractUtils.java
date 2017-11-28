@@ -14,48 +14,75 @@ import java.util.List;
  */
 public class MethodExtractUtils {
 
+    public static final String SET_METHOD_NAME_PREFIX = "set";
+
+    public static final String GET_METHOD_NAME_PREFIX = "get";
+
     @NotNull
-    public static List<PsiMethod> extractSetMethods(PsiClass psiClass) {
+    public static List<PsiMethod> extractSetMethods(PsiClass clazz) {
         List<PsiMethod> methodList = new ArrayList<>();
-        while (isSystemClass(psiClass)) {
-            addSetMethodToList(psiClass, methodList);
-            psiClass = psiClass.getSuperClass();
+        while (isJDKClazz(clazz)) {
+            addSetMethodToList(clazz, methodList);
+            // get super class recursion(递归)
+            clazz = clazz.getSuperClass();
         }
         return methodList;
     }
 
+
     public static void addSetMethodToList(PsiClass psiClass, List<PsiMethod> methodList) {
         PsiMethod[] methods = psiClass.getMethods();
         for (PsiMethod method : methods) {
-            if (isValidSetMethod(method)) {
+            if (isValidMethod(method, SET_METHOD_NAME_PREFIX)) {
                 methodList.add(method);
             }
         }
     }
 
-    public static boolean isValidSetMethod(PsiMethod m) {
-        return m.hasModifierProperty("public") && !m.hasModifierProperty("static") && m.getName().startsWith("set");
+    @NotNull
+    public static List<PsiMethod> extractGetMethods(PsiClass clazz) {
+        List<PsiMethod> methodList = new ArrayList<>();
+        while (isJDKClazz(clazz)) {
+            addGetMethodToList(clazz, methodList);
+            // get super class recursion(递归)
+            clazz = clazz.getSuperClass();
+        }
+        return methodList;
     }
 
-    public static boolean isSystemClass(PsiClass psiClass) {
-        if (psiClass == null) {
+    public static void addGetMethodToList(PsiClass psiClass, List<PsiMethod> methodList) {
+        PsiMethod[] methods = psiClass.getMethods();
+        for (PsiMethod method : methods) {
+            if (isValidMethod(method, GET_METHOD_NAME_PREFIX)) {
+                methodList.add(method);
+            }
+        }
+    }
+
+    public static boolean isValidMethod(PsiMethod m, String methodNamePrefix) {
+        return m.hasModifierProperty("public") && !m.hasModifierProperty("static") && m.getName().startsWith(methodNamePrefix);
+    }
+
+    public static boolean isJDKClazz(PsiClass clazz) {
+        if (clazz == null) {
             return false;
         }
-        String qualifiedName = psiClass.getQualifiedName();
+        String qualifiedName = clazz.getQualifiedName();
+        // exclude java.util.*  and so on
         if (qualifiedName == null || qualifiedName.startsWith("java.")) {
             return false;
         }
         return true;
     }
 
-    public static boolean checkClassHasValidSetMethod(PsiClass psiClass) {
-        while (isSystemClass(psiClass)) {
-            for (PsiMethod m : psiClass.getMethods()) {
-                if (isValidSetMethod(m)) {
+    public static boolean existSetFieldMethod(PsiClass clazz) {
+        while (isJDKClazz(clazz)) {
+            for (PsiMethod m : clazz.getMethods()) {
+                if (isValidMethod(m, SET_METHOD_NAME_PREFIX)) {
                     return true;
                 }
             }
-            psiClass = psiClass.getSuperClass();
+            clazz = clazz.getSuperClass();
         }
         return false;
     }

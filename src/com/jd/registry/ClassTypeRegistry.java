@@ -1,4 +1,4 @@
-package com.jd.register;
+package com.jd.registry;
 
 import org.apache.commons.lang3.StringUtils;
 
